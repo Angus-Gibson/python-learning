@@ -1,143 +1,11 @@
 import tkinter as tk
-from tkinter import font as tkfont
 import random
+from strategy import DEALER_CARDS, ACTION_COLORS, ACTION_SHORT, STRATEGY, make_cards
 
-# ─────────────────────────────────────────────
-# STRATEGY DATA  (Double-Deck, Dealer Hits S17)
-# Keys: (player_hand, dealer_up)  Values: action
-# ─────────────────────────────────────────────
-DEALER_CARDS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A']
 
-ACTION_COLORS = {
-    'Hit':         '#F5C518',   # gold-yellow
-    'Stand':       '#4CAF50',   # green
-    'Double Down': '#E53935',   # red
-    'Split':       '#1E88E5',   # blue
-}
-
-ACTION_SHORT = {
-    'Hit': 'H', 'Stand': 'S', 'Double Down': 'D', 'Split': 'SP'
-}
-
-# Full strategy table ─ (player_hand_label, dealer_up) → action
-def build_strategy():
-    table = {}
-
-    # ── Section I: Hard Totals ──────────────────────────────────
-    for d in DEALER_CARDS:
-        table[('17+', d)] = 'Stand'
-
-    s16 = {'2','3','4','5','6'}
-    for d in DEALER_CARDS:
-        table[('16', d)] = 'Stand' if d in s16 else 'Hit'
-
-    for hand in ('15', '14', '13'):
-        for d in DEALER_CARDS:
-            table[(hand, d)] = 'Stand' if d in s16 else 'Hit'
-
-    s12 = {'4','5','6'}
-    for d in DEALER_CARDS:
-        table[('12', d)] = 'Stand' if d in s12 else 'Hit'
-
-    for d in DEALER_CARDS:
-        table[('11', d)] = 'Double Down'
-
-    d10_dd = {'2','3','4','5','6','7','8','9'}
-    for d in DEALER_CARDS:
-        table[('10', d)] = 'Double Down' if d in d10_dd else 'Hit'
-
-    d9_dd = {'3','4','5','6'}
-    for d in DEALER_CARDS:
-        table[('9', d)] = 'Double Down' if d in d9_dd else 'Hit'
-
-    for d in DEALER_CARDS:
-        table[('5-8', d)] = 'Hit'
-
-    # ── Section III: Soft Totals ────────────────────────────────
-    for d in DEALER_CARDS:
-        table[('A,9 / A,10', d)] = 'Stand'
-
-    a8_d = {'6'}
-    for d in DEALER_CARDS:
-        table[('A,8', d)] = 'Double Down' if d in a8_d else 'Stand'
-
-    a7_stand = {'7','8'}
-    a7_dd    = {'2','3','4','5','6'}
-    for d in DEALER_CARDS:
-        if d in a7_stand:
-            table[('A,7', d)] = 'Stand'
-        elif d in a7_dd:
-            table[('A,7', d)] = 'Double Down'
-        else:
-            table[('A,7', d)] = 'Hit'
-
-    a6_dd = {'3','4','5','6'}
-    for d in DEALER_CARDS:
-        table[('A,6', d)] = 'Double Down' if d in a6_dd else 'Hit'
-
-    a45_dd = {'4','5','6'}
-    for hand in ('A,5', 'A,4'):
-        for d in DEALER_CARDS:
-            table[(hand, d)] = 'Double Down' if d in a45_dd else 'Hit'
-
-    a23_dd = {'4','5','6'}
-    for hand in ('A,3', 'A,2'):
-        for d in DEALER_CARDS:
-            table[(hand, d)] = 'Double Down' if d in a23_dd else 'Hit'
-
-    # ── Section IV: Pairs ───────────────────────────────────────
-    for d in DEALER_CARDS:
-        table[('A,A / 8,8', d)] = 'Split'
-
-    for d in DEALER_CARDS:
-        table[('10,10', d)] = 'Stand'
-
-    for d in DEALER_CARDS:
-        table[('9,9', d)] = 'Stand' if d in {'7','10','A'} else 'Split'
-
-    sp77 = {'2','3','4','5','6','7'}
-    for d in DEALER_CARDS:
-        table[('7,7', d)] = 'Split' if d in sp77 else 'Hit'
-
-    sp66 = {'2','3','4','5','6'}
-    for d in DEALER_CARDS:
-        table[('6,6', d)] = 'Split' if d in sp66 else 'Hit'
-
-    d55_dd = {'2','3','4','5','6','7','8','9'}
-    for d in DEALER_CARDS:
-        table[('5,5', d)] = 'Double Down' if d in d55_dd else 'Hit'
-
-    sp44 = {'5','6'}
-    for d in DEALER_CARDS:
-        table[('4,4', d)] = 'Split' if d in sp44 else 'Hit'
-
-    sp33 = {'2','3','4','5','6','7'}
-    for d in DEALER_CARDS:
-        table[('3,3', d)] = 'Split' if d in sp33 else 'Hit'
-
-    sp22 = {'2','3','4','5','6','7'}
-    for d in DEALER_CARDS:
-        table[('2,2', d)] = 'Split' if d in sp22 else 'Hit'
-
-    return table
-
-STRATEGY = build_strategy()
-
-# Build deck of flash cards
-def make_cards():
-    cards = []
-    for (hand, dealer), action in STRATEGY.items():
-        cards.append({
-            'hand':   hand,
-            'dealer': dealer,
-            'action': action,
-        })
-    return cards
-
-# ─────────────────────────────────────────────
-# GUI
-# ─────────────────────────────────────────────
 class BlackjackFlashcardApp:
+    """GUI application for blackjack strategy flashcards."""
+    
     def __init__(self, root):
         self.root = root
         self.root.title("Blackjack Strategy Flashcards")
@@ -155,6 +23,7 @@ class BlackjackFlashcardApp:
 
     # ── UI Construction ──────────────────────────────────────────
     def _build_ui(self):
+        """Build the complete user interface."""
         W = 560
         PAD = 28
 
@@ -315,6 +184,7 @@ class BlackjackFlashcardApp:
         ).pack(pady=(4, 0))
 
     def _draw_card_bg(self):
+        """Draw the card background with rounded corners and texture."""
         W, H = 560, 260
         r = 18
         pts = [r, 0, W-r, 0, W, r, W, H-r, W-r, H, r, H, 0, H-r, 0, r]
@@ -326,6 +196,7 @@ class BlackjackFlashcardApp:
 
     # ── Card Logic ───────────────────────────────────────────────
     def _show_card(self):
+        """Display the current flashcard (front side)."""
         if self.index >= len(self.cards):
             self._end_of_deck()
             return
@@ -363,6 +234,7 @@ class BlackjackFlashcardApp:
         )
 
     def _flip(self):
+        """Flip the card to show the strategy table."""
         if self.flipped:
             return
         self.flipped = True
@@ -451,12 +323,14 @@ class BlackjackFlashcardApp:
             )
 
     def _next(self):
+        """Move to the next flashcard."""
         self.canvas.delete('divider')
         self.canvas.delete('table_items')
         self.index += 1
         self._show_card()
 
     def _shuffle(self):
+        """Shuffle the cards and restart."""
         self.canvas.delete('divider')
         self.canvas.delete('table_items')
         random.shuffle(self.cards)
@@ -465,6 +339,7 @@ class BlackjackFlashcardApp:
         self._show_card()
 
     def _end_of_deck(self):
+        """Display end-of-deck message."""
         for w in (self.lbl_front_top, self.lbl_hand, self.lbl_hand_sub,
                   self.lbl_dealer_top, self.lbl_dealer_card,
                   self.lbl_action_lbl, self.lbl_action,
@@ -483,16 +358,9 @@ class BlackjackFlashcardApp:
 
     @staticmethod
     def _section(hand):
+        """Determine which section a hand belongs to (Hard, Soft, or Pairs)."""
         pairs    = {'A,A / 8,8','10,10','9,9','7,7','6,6','5,5','4,4','3,3','2,2'}
         soft     = {'A,9 / A,10','A,8','A,7','A,6','A,5','A,4','A,3','A,2'}
         if hand in pairs:  return 'PAIRS'
         if hand in soft:   return 'SOFT TOTAL'
         return 'HARD TOTAL'
-
-
-# ─────────────────────────────────────────────
-if __name__ == '__main__':
-    root = tk.Tk()
-    root.geometry('616x560')
-    app = BlackjackFlashcardApp(root)
-    root.mainloop()
