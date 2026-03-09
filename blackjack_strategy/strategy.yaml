@@ -1,0 +1,136 @@
+# Blackjack Basic Strategy - Double Deck, Dealer Hits Soft 17
+# This is the complete strategy table mapping (player_hand, dealer_upcard) -> action
+
+dealer_cards: ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'A']
+
+# HARD TOTALS
+# Strategy rules for hands with no Ace or an Ace counted as 1
+hard_totals:
+  "17+":
+    dealers: all
+    action: Stand
+    
+  "16":
+    stand_against: ['2', '3', '4', '5', '6']
+    default_action: Hit
+    
+  "15":
+    stand_against: ['2', '3', '4', '5', '6']
+    default_action: Hit
+    
+  "14":
+    stand_against: ['2', '3', '4', '5', '6']
+    default_action: Hit
+    
+  "13":
+    stand_against: ['2', '3', '4', '5', '6']
+    default_action: Hit
+    
+  "12":
+    stand_against: ['4', '5', '6']
+    default_action: Hit
+    
+  "11":
+    dealers: all
+    action: Double Down
+    
+  "10":
+    double_down_against: ['2', '3', '4', '5', '6', '7', '8', '9']
+    default_action: Hit
+    
+  "9":
+    double_down_against: ['3', '4', '5', '6']
+    default_action: Hit
+    
+  "5-8":
+    dealers: all
+    action: Hit
+
+# SOFT TOTALS
+# Strategy rules for hands with an Ace counted as 11
+soft_totals:
+  "A,9 / A,10":
+    dealers: all
+    action: Stand
+    
+  "A,8":
+    double_down_against: ['6']
+    default_action: Stand
+    
+  "A,7":
+    stand_against: ['7', '8']
+    double_down_against: ['2', '3', '4', '5', '6']
+    default_action: Hit
+    
+  "A,6":
+    double_down_against: ['3', '4', '5', '6']
+    default_action: Hit
+    
+  "A,5":
+    double_down_against: ['4', '5', '6']
+    default_action: Hit
+    
+  "A,4":
+    double_down_against: ['4', '5', '6']
+    default_action: Hit
+    
+  "A,3":
+    double_down_against: ['4', '5', '6']
+    default_action: Hit
+    
+  "A,2":
+    double_down_against: ['4', '5', '6']
+    default_action: Hit
+
+# PAIRS
+# Strategy rules for pocket pairs
+pairs:
+  "A,A / 8,8":
+    dealers: all
+    action: Split
+    
+  "10,10":
+    dealers: all
+    action: Stand
+    
+  "9,9":
+    stand_against: ['7', '10', 'A']
+    default_action: Split
+    
+  "7,7":
+    split_against: ['2', '3', '4', '5', '6', '7']
+    default_action: Hit
+    
+  "6,6":
+    split_against: ['2', '3', '4', '5', '6']
+    default_action: Hit
+    
+  "5,5":
+    double_down_against: ['2', '3', '4', '5', '6', '7', '8', '9']
+    default_action: Hit
+    
+  "4,4":
+    split_against: ['5', '6']
+    default_action: Hit
+    
+  "3,3":
+    split_against: ['2', '3', '4', '5', '6', '7']
+    default_action: Hit
+    
+  "2,2":
+    split_against: ['2', '3', '4', '5', '6', '7']
+    default_action: Hit
+
+# ACTION COLORS (for UI display)
+action_colors:
+  Hit: '#F5C518'           # gold-yellow
+  Stand: '#4CAF50'         # green
+  Double Down: '#E53935'   # red
+  Split: '#1E88E5'         # blue
+
+# ACTION ABBREVIATIONS (for card display)
+action_short:
+  Hit: H
+  Stand: S
+  Double Down: D
+  Split: SP

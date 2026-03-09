@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import messagebox
+import os
 import random
 from strategy import DEALER_CARDS, ACTION_COLORS, ACTION_SHORT, STRATEGY, make_cards
 
@@ -18,8 +20,70 @@ class BlackjackFlashcardApp:
         self.flipped = False
         self.score = {'correct': 0, 'wrong': 0, 'seen': 0}
 
+        self._build_menu()
+        self._build_menu()
         self._build_ui()
         self._show_card()
+
+    # ── Menu Construction ────────────────────────────────────────
+    def _build_menu(self):
+        """Build the menu bar with Help dropdown."""
+        menubar = tk.Menu(self.root)
+        self.root.config(menu=menubar)
+
+        # Help menu
+        help_menu = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label='Help', menu=help_menu)
+        help_menu.add_command(label='ReadMe', command=self._show_readme)
+
+    def _show_readme(self):
+        """Display the README file in a new window."""
+        # Get the path to README.md
+        readme_path = os.path.join(os.path.dirname(__file__), 'README.md')
+        
+        if not os.path.exists(readme_path):
+            # Show error dialog if README doesn't exist
+            tk.messagebox.showerror('Error', 'README.md file not found.')
+            return
+        
+        # Read the README content
+        try:
+            with open(readme_path, 'r', encoding='utf-8') as f:
+                readme_content = f.read()
+        except Exception as e:
+            tk.messagebox.showerror('Error', f'Could not read README.md: {str(e)}')
+            return
+        
+        # Create a new window to display the README
+        readme_window = tk.Toplevel(self.root)
+        readme_window.title('ReadMe - Blackjack Strategy Flashcards')
+        readme_window.geometry('700x600')
+        readme_window.configure(bg='#0A1628')
+        
+        # Create a frame with scrollbar
+        frame = tk.Frame(readme_window, bg='#0A1628')
+        frame.pack(fill='both', expand=True, padx=10, pady=10)
+        
+        # Create a text widget with scrollbar
+        scrollbar = tk.Scrollbar(frame, bg='#1E3A5F', troughcolor='#0A1628')
+        scrollbar.pack(side='right', fill='y')
+        
+        text_widget = tk.Text(
+            frame, 
+            wrap='word',
+            yscrollcommand=scrollbar.set,
+            bg='#132240',
+            fg='#C9A84C',
+            font=('Courier', 10),
+            relief='flat',
+            bd=0
+        )
+        text_widget.pack(side='left', fill='both', expand=True)
+        scrollbar.config(command=text_widget.yview)
+        
+        # Insert the README content
+        text_widget.insert('1.0', readme_content)
+        text_widget.config(state='disabled')
 
     # ── UI Construction ──────────────────────────────────────────
     def _build_ui(self):
@@ -234,14 +298,36 @@ class BlackjackFlashcardApp:
         )
 
     def _flip(self):
-        """Flip the card to show the strategy table."""
+        """Toggle card between front (player hand) and back (strategy table)."""
         if self.flipped:
-            return
+            # Flip back to front
+            self._show_front()
+        else:
+            # Flip to back
+            self._show_back()
+
+    def _show_front(self):
+        """Display the card's front side (player hand)."""
+        self.flipped = False
+        
+        # Hide back
+        self.canvas.delete('table_items')
+        
+        # Show front labels
+        self.lbl_front_top.place(x=280, y=42, anchor='center')
+        self.lbl_hand.place(x=280, y=128, anchor='center')
+        self.lbl_hand_sub.place(x=280, y=198, anchor='center')
+        
+        # Update button
+        self.flip_btn.config(text='FLIP  ▶')
+
+    def _show_back(self):
+        """Display the card's back side (strategy table)."""
         self.flipped = True
         card = self.cards[self.index]
         player_hand = card['hand']
 
-        # Hide front
+        # Hide front labels
         self.lbl_front_top.place_forget()
         self.lbl_hand.place_forget()
         self.lbl_hand_sub.place_forget()
@@ -250,9 +336,13 @@ class BlackjackFlashcardApp:
         self.canvas.delete('table_items')
         self._draw_strategy_table(player_hand)
 
-        self.flip_btn.config(state='disabled', text='FLIPPED')
+        # Update button and enable next
+        self.flip_btn.config(text='UNFLIP  ◀')
         self.next_btn.config(state='normal')
-        self.score['seen'] += 1
+        
+        # Only count as seen on first flip
+        if self.score['seen'] < self.index + 1:
+            self.score['seen'] += 1
 
     def _draw_strategy_table(self, player_hand):
         """Display the full strategy table for the given player hand."""

@@ -28,7 +28,8 @@ The strategy implemented is **Basic Strategy for Double-Deck Games** where the d
 ```
 blackjack_strategy/
 ├── main.py                    # Main entry point
-├── strategy.py                # Strategy data and card generation
+├── strategy.py                # Strategy loader and card generation
+├── strategy.yaml              # Blackjack strategy configuration (data)
 ├── gui.py                     # GUI application class
 ├── requirements.txt           # Python dependencies
 └── README.md                  # This file
@@ -43,14 +44,20 @@ The main entry point for the application. Imports the GUI class and launches the
 python main.py
 ```
 
-#### `strategy.py`
-Contains all the blackjack strategy data:
-- **Constants**: `DEALER_CARDS`, `ACTION_COLORS`, `ACTION_SHORT`
-- **Functions**: 
-  - `build_strategy()` - Constructs the complete strategy table
-  - `make_cards()` - Generates flashcard data from the strategy table
+#### `strategy.yaml`
+The blackjack strategy configuration file. Defines all game rules organized by hand type:
+- **Hard Totals**: Hands with no Ace or an Ace counted as 1
+- **Soft Totals**: Hands with an Ace counted as 11
+- **Pairs**: Pocket pair rules
+- **UI Config**: Colors and abbreviations for actions
 
-The strategy table maps `(player_hand, dealer_up_card)` tuples to recommended actions.
+This file uses a declarative format that allows easy customization and support for different rule variants (single-deck, 6-deck, dealer stands on S17, etc.) without modifying Python code.
+
+#### `strategy.py`
+Loads the strategy configuration from `strategy.yaml` and:
+- Parses the YAML rules into a lookup table
+- Exports `DEALER_CARDS`, `ACTION_COLORS`, `ACTION_SHORT` constants
+- Generates flashcard objects from the strategy table via `make_cards()`
 
 #### `gui.py`
 Contains the `BlackjackFlashcardApp` class that handles:
@@ -59,6 +66,7 @@ Contains the `BlackjackFlashcardApp` class that handles:
 - Strategy table rendering on card back
 - Button event handling (Flip, Next, Shuffle)
 - Progress and score tracking
+- Menu bar with Help dropdown (README viewer)
 
 ## Installation
 
@@ -69,7 +77,38 @@ Contains the `BlackjackFlashcardApp` class that handles:
    pip install -r requirements.txt
    ```
 
-## Usage
+## Configuration
+
+The blackjack strategy is defined in [strategy.yaml](strategy.yaml), which uses YAML format for easy customization:
+
+### Customizing Strategy Rules
+
+Edit [strategy.yaml](strategy.yaml) to change strategy rules. The file is organized by hand type:
+
+**Example: Modifying a hard total rule**
+```yaml
+hard_totals:
+  "16":
+    stand_against: ['2', '3', '4', '5', '6']  # Stand against weak dealer cards
+    default_action: Hit                         # Hit against strong dealer cards
+```
+
+**Example: Modifying a pair rule**
+```yaml
+pairs:
+  "9,9":
+    stand_against: ['7', '10', 'A']
+    default_action: Split
+```
+
+### Supporting Different Game Variants
+
+You can create variant YAML files for different blackjack rules:
+- `strategy_single_deck.yaml` - Single-deck games
+- `strategy_6deck_h17.yaml` - 6-deck where dealer hits on soft 17
+- `strategy_6deck_s17.yaml` - 6-deck where dealer stands on soft 17
+
+Then update [strategy.py](strategy.py) to load the desired variant.
 
 Run the application with:
 ```bash
