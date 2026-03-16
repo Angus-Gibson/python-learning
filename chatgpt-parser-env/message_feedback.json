@@ -1,0 +1,26 @@
+[
+  {
+    "content": "{}",
+    "conversation_id": "68fba19e-20b8-8327-b090-0d0010f69dae",
+    "create_time": "2025-10-24T16:09:30.075018Z",
+    "evaluation_name": "gpt5_paid_auto_thinking_juice_test",
+    "evaluation_treatment": "da",
+    "id": "7aea56ac-449f-47c7-8a11-1f49f9ff3ed4",
+    "rating": "thumbs_up",
+    "update_time": "2025-10-24T16:09:30.138636Z",
+    "user_id": "user-0lsHAoRefBEEZM689xXgXgOw",
+    "workspace_id": null
+  },
+  {
+    "content": "{}",
+    "conversation_id": "6994bfcf-f1a8-8326-89ba-a02e73cc4ba6",
+    "create_time": "2026-02-17T19:27:42.660864Z",
+    "evaluation_name": null,
+    "evaluation_treatment": null,
+    "id": "76700b35-a168-44ca-ac69-709ed6a30c82",
+    "rating": "thumbs_down",
+    "update_time": "2026-02-17T19:27:42.691289Z",
+    "user_id": "user-0lsHAoRefBEEZM689xXgXgOw",
+    "workspace_id": null
+  }
+]
