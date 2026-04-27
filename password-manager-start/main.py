@@ -1,9 +1,10 @@
 """Password Manager Application using Tkinter GUI."""
+
+import json
 from tkinter import Tk, Canvas, PhotoImage, Label, Entry, Button, END
 from tkinter import messagebox
 from random import randint, choice, shuffle
 import pyperclip
-import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
@@ -87,6 +88,7 @@ def generate_password():
 
     password = "".join(password_list)
     password_entry.insert(0, password)
+    pyperclip.copy(password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
@@ -100,7 +102,7 @@ def save_password():
     new_data = {
         website_txt: {
             "email": username_txt,
-            "password": password_txt,        
+            "password": password_txt,
         }
     }
 
@@ -122,12 +124,29 @@ def save_password():
                 data.update(new_data)
         except FileNotFoundError:
             data = new_data
-        else:        
-            with open("file.json", "w", encoding="utf-8") as file:
-                json.dump(data, file, indent=4)
-        finally:
-            website_entry.delete(0, END)
-            password_entry.delete(0, END)
+        with open("file.json", "w", encoding="utf-8") as file:
+            json.dump(data, file, indent=4)
+        website_entry.delete(0, END)
+        password_entry.delete(0, END)
+
+
+def search_password():
+    """Search for a password entry in the file and display it."""
+    website_txt = website_entry.get()
+    try:
+        with open("file.json", "r", encoding="utf-8") as file:
+            data = json.load(file)
+            if website_txt in data:
+                messagebox.showinfo(
+                    title="Password",
+                    message=f"Password: {data[website_txt]['password']}",
+                )
+            else:
+                messagebox.showerror(
+                    title="Error", message="No data for that website found."
+                )
+    except FileNotFoundError:
+        messagebox.showerror(title="File Not Found", message="No data file found.")
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -150,8 +169,8 @@ username_label.grid(column=0, row=2)
 password_label = Label(window, text="Password:", font=("Arial", 10))
 password_label.grid(column=0, row=3)
 
-website_entry = Entry(window, width=36)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry = Entry(window, width=16)
+website_entry.grid(column=1, row=1)
 website_entry.focus()
 
 username_entry = Entry(window, width=36)
@@ -168,5 +187,8 @@ generate_button.grid(column=2, row=3)
 
 save_button = Button(window, text="Add", command=save_password, width=36)
 save_button.grid(column=1, row=4, columnspan=2)
+
+search_button = Button(window, text="Search", command=search_password, width=13)
+search_button.grid(column=2, row=1)
 
 window.mainloop()
