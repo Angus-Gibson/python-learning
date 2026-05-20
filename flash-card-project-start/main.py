@@ -30,4 +30,6 @@ cross_button_img = PhotoImage(
 cross_button = Button(image=cross_button_img, highlightthickness=0)
 cross_button.grid(column=0, row=1)
 
+data = pandas.read_csv("data/french_words.csv")
+
 window.mainloop()
