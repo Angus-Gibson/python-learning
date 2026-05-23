@@ -13,32 +13,47 @@ window.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
 data = pandas.read_csv("data/french_words.csv")
 data_dict = data.to_dict(orient="records")
 
+current_word = {}
+flip_timer = None
+
+def flip_card():
+    global current_word
+    canvas.itemconfig(card_img, image=card_back_img)
+    canvas.itemconfig(card_title, text="English")
+    canvas.itemconfig(card_word, text=current_word["English"], fill="white")
 
 def new_card():
-    """Changes the Canvas to a new card after end user clicks on check or cross"""
-    canvas = Canvas(
-        width=800,
-        height=526,
-        bg=BACKGROUND_COLOR,
-        highlightthickness=0,
-    )
-    card_front_img = PhotoImage(file="images/card_front.png")
-    canvas.create_image(400, 263, image=card_front_img)
-    canvas.grid(column=0, row=0, columnspan=2)
+    global current_word, flip_timer
+    if flip_timer is not None:
+        window.after_cancel(flip_timer)
+    current_word = random.choice(data_dict)
+    canvas.itemconfig(card_img, image=card_front_img)
+    canvas.itemconfig(card_title, text="French")
+    canvas.itemconfig(card_word, text=current_word["French"], fill="black")
+    flip_timer = window.after(3000, flip_card)
 
-    canvas.create_text(
-        400, 150,
-        text="French",
-        font=("Ariel", 40, "italic"),
-    )
+canvas = Canvas(
+    width=800,
+    height=526,
+    bg=BACKGROUND_COLOR,
+    highlightthickness=0,
+)
+card_front_img = PhotoImage(file="images/card_front.png")
+card_img = canvas.create_image(400, 263, image=card_front_img)
+canvas.grid(column=0, row=0, columnspan=2)
 
-    french_word = random.choice(data_dict)
-    canvas.create_text(
+card_back_img = PhotoImage(file="images/card_back.png")
+
+card_title = canvas.create_text(
+    400, 150,
+    text="French",
+    font=("Ariel", 40, "italic"),
+)
+
+card_word = canvas.create_text(
         400, 263,
-        text=french_word["French"],
         font=("Ariel", 60, "bold"),
     )
-
 
 check_button_img = PhotoImage(file="images/right.png")
 check_button = Button(
