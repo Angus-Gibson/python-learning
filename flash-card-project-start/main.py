@@ -1,35 +1,61 @@
-BACKGROUND_COLOR = "#B1DDC6"
+import random
 from tkinter import *
-from random import *
 
-#UI Setup
+import pandas
+
+BACKGROUND_COLOR = "#B1DDC6"
+
+# UI Setup
 window = Tk()
 window.title("Flash Card")
 window.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
 
-canvas = Canvas(width=800, height=526, bg=BACKGROUND_COLOR, highlightthickness=0)
-card_front_img = PhotoImage(file="images/card_front.png")
-canvas.create_image(400, 263, image=card_front_img)
-canvas.grid(column=0, row=0, columnspan=2)
+data = pandas.read_csv("data/french_words.csv")
+data_dict = data.to_dict(orient="records")
 
-french_label = Label(text="French",
-                     font=("Ariel", 40, "italic"),
-                     fg="black", highlightthickness=0, bg="white"
-)
-french_label.place(x=400, y=150, anchor="center")
 
-check_button_img = PhotoImage(
-    file="images/right.png"
+def new_card():
+    """Changes the Canvas to a new card after end user clicks on check or cross"""
+    canvas = Canvas(
+        width=800,
+        height=526,
+        bg=BACKGROUND_COLOR,
+        highlightthickness=0,
+    )
+    card_front_img = PhotoImage(file="images/card_front.png")
+    canvas.create_image(400, 263, image=card_front_img)
+    canvas.grid(column=0, row=0, columnspan=2)
+
+    canvas.create_text(
+        400, 150,
+        text="French",
+        font=("Ariel", 40, "italic"),
+    )
+
+    french_word = random.choice(data_dict)
+    canvas.create_text(
+        400, 263,
+        text=french_word["French"],
+        font=("Ariel", 60, "bold"),
+    )
+
+
+check_button_img = PhotoImage(file="images/right.png")
+check_button = Button(
+    image=check_button_img,
+    highlightthickness=0,
+    command=new_card,
 )
-check_button = Button(image=check_button_img, highlightthickness=0)
 check_button.grid(column=1, row=1)
 
-cross_button_img = PhotoImage(
-    file="images/wrong.png"
+cross_button_img = PhotoImage(file="images/wrong.png")
+cross_button = Button(
+    image=cross_button_img,
+    highlightthickness=0,
+    command=new_card,
 )
-cross_button = Button(image=cross_button_img, highlightthickness=0)
 cross_button.grid(column=0, row=1)
 
-data = pandas.read_csv("data/french_words.csv")
+new_card()
 
 window.mainloop()
