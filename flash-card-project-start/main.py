@@ -17,17 +17,19 @@ finally:
     data_dict = data.to_dict(orient="records")
 
 current_word = {}
-flip_timer = flip_timer = window.after(3000, flip_card)
 words_to_learn = [word for word in data_dict]
+flip_timer = None
 
 def flip_card():
     canvas.itemconfig(card_img, image=card_back_img)
     canvas.itemconfig(card_title, text="English")
     canvas.itemconfig(card_word, text=current_word["English"], fill="white")
 
+
 def new_card():
     global current_word, flip_timer
-    window.after_cancel(flip_timer)
+    if flip_timer is not None:
+        window.after_cancel(flip_timer)
     current_word = random.choice(data_dict)
     canvas.itemconfig(card_img, image=card_front_img)
     canvas.itemconfig(card_title, text="French")
