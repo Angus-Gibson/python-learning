@@ -8,6 +8,37 @@
 
 # 4. Send the letter generated in step 3 to that person's email address.
 
+import datetime as dt
+import pandas as pd
+import random
+import smtplib
+
+MY_EMAIL = "angusgibsonpython@gmail.com"
+PASSWORD = "zubyeifsrqgirwae"
+NOW = dt.datetime.now()
+MONTH = NOW.month
+DAY = NOW.day
+SEARCH_TEXT = "[NAME]"
+birthdays = pd.read_csv("birthdays.csv")
+birthdays_dict = birthdays.to_dict(orient="records")
+current_birthday = {}
 
 
+for birthday in birthdays_dict:
+    current_birthday = birthday
+    if current_birthday["month"] == MONTH and current_birthday["day"] == DAY:
+        name = current_birthday["name"]
+        letter_num = random.randint(1, 3)
+        with open(f"letter_templates/letter_{letter_num}.txt", "r", encoding="utf-8") as file:
+            old_letter = file.read()
+            new_letter = old_letter.replace(SEARCH_TEXT, name)
+        with open("letter_templates/new_letter", "w", encoding="utf-8") as file:
+            file.write(new_letter)
+            with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+                connection.starttls()
+                connection.login(user=MY_EMAIL, password=PASSWORD)
+                connection.sendmail(from_addr=MY_EMAIL,
+                                    to_addrs=current_birthday["email"],
+                                    msg=f"Subject: Happy Birthday!\n\n{new_letter}"
+                )
 
