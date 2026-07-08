@@ -1,31 +1,10 @@
-# import smtplib
-
-# my_email = "angusgibsonpython@gmail.com"
-# password = "zubyeifsrqgirwae"
-
-# with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
-#     connection.starttls()
-#     connection.login(user=my_email, password=password)
-#     connection.sendmail(from_addr=my_email,
-#                         to_addrs="angusgibsonpython@yahoo.com",
-#                         msg="Subject:Hello\n\nThis is the body of the email."
-#     )
-
-# import datetime as dt
-
-# now = dt.datetime.now()
-# year = now.year
-# weekday = now.weekday()
-# print(weekday)
-
-# date_of_birth = dt.datetime(year=1990, month=1, day=14, hour=3)
-# print(date_of_birth)
 import random
 import smtplib
 import datetime as dt
+import os
 
-MY_EMAIL = "angusgibsonpython@gmail.com"
-PASSWORD = "zubyeifsrqgirwae"
+MY_EMAIL = os.environ.get("MY_EMAIL")
+PASSWORD = os.environ.get("MY_PASSWORD")
 
 now = dt.datetime.now()
 weekday = now.weekday()
