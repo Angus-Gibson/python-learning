@@ -32,13 +32,11 @@ for birthday in birthdays_dict:
         with open(f"letter_templates/letter_{letter_num}.txt", "r", encoding="utf-8") as file:
             old_letter = file.read()
             new_letter = old_letter.replace(SEARCH_TEXT, name)
-        with open("letter_templates/new_letter", "w", encoding="utf-8") as file:
-            file.write(new_letter)
-            with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
-                connection.starttls()
-                connection.login(user=MY_EMAIL, password=PASSWORD)
-                connection.sendmail(from_addr=MY_EMAIL,
-                                    to_addrs=current_birthday["email"],
-                                    msg=f"Subject: Happy Birthday!\n\n{new_letter}"
-                )
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+            connection.starttls()
+            connection.login(user=MY_EMAIL, password=PASSWORD)
+            connection.sendmail(from_addr=MY_EMAIL,
+                                to_addrs=current_birthday["email"],
+                                msg=f"Subject: Happy Birthday!\n\n{new_letter}"
+            )
 
