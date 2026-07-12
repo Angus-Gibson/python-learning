@@ -1,4 +1,4 @@
-#!/home/angusgibson/python-learning/birthday-wisher-extrahard-start/.venv/bin/python3
+#!/home/angusgibson/python-learning/birthday-wisher-extrahard-start/.venv/bin/python3.14
 # -*- coding: utf-8 -*-
 import re
 import sys
