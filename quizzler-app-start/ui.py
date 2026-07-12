@@ -40,6 +40,7 @@ class QuizInterface:
         self.true_button = Button(
             image=self.true_img,
             highlightthickness=0,
+            bg=THEME_COLOR,
             command=self.check_true
         )
         self.true_button.grid(column=0, row=2)
@@ -48,6 +49,7 @@ class QuizInterface:
         self.false_button = Button(
             image=self.false_img,
             highlightthickness=0,
+            bg=THEME_COLOR,
             command=self.check_false
         )
         self.false_button.grid(column=1, row=2)
