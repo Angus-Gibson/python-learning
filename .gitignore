@@ -5,3 +5,8 @@ __pycache__/
 *.zip
 enigma/
 day33/
+
+# macOS metadata
+__MACOSX/
+.DS_Store
+._*
