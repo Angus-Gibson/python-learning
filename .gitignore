@@ -10,3 +10,4 @@ day33/
 __MACOSX/
 .DS_Store
 ._*
+weather/secrets.txt
