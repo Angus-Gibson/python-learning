@@ -2,4 +2,4 @@
 from data_manager import DataManager
 
 flight_data = DataManager()
-print(flight_data)
+print(flight_data.data)
