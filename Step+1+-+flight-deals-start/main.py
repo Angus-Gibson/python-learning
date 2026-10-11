@@ -11,7 +11,7 @@ requests_cache.install_cache(
     urls_expire_after={
         "*.sheety.co*": requests_cache.DO_NOT_CACHE,
         "*": 3600,
-    }
+    },
 )
 
 data_manager = DataManager()
@@ -26,5 +26,10 @@ six_months_str = six_months_from_today.strftime("%Y-%m-%d")
 today_str = today.strftime("%Y-%m-%d")
 
 flight_search = FlightSearch()
-search = flight_search.check_flights(origin_city_code = "LHR", destination_city_code="CDG", from_time=today_str, to_time=tomorrow_str)
+search = flight_search.check_flights(
+    origin_city_code="LHR",
+    destination_city_code="CDG",
+    from_time=today_str,
+    to_time=tomorrow_str,
+)
 pprint(search)
