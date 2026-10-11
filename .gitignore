@@ -14,3 +14,4 @@ __MACOSX/
 .DS_Store
 ._*
 weather/secrets.txt
+Step+1+-+flight-deals-start/flight_cache.sqlite
