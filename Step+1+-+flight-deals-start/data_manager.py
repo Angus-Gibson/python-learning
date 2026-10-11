@@ -1,18 +1,29 @@
-import requests
 import os
+import requests
 from dotenv import load_dotenv
+
+load_dotenv()
+
+
 class DataManager:
-    #This class is responsible for talking to the Google Sheet.
+    """Talks to the Sheety API to get city code and pricing information from the Google Sheet"""
+
     def __init__(self):
-        load_dotenv()
-        self.sheety_endpoint = os.getenv("SHEETY_ENDPOINT")
-        self.sheety_auth = (os.getenv("SHEETY_USERNAME"),
-                            os.getenv("SHEETY_PASSWORD"),
+        self.sheety_endpoint = os.environ["SHEETY_ENDPOINT"]
+        self.sheety_auth = (
+            os.environ["SHEETY_USERNAME"],
+            os.environ["SHEETY_PASSWORD"],
         )
-        
-        response = requests.get(url=self.sheety_endpoint,
-                                auth=self.sheety_auth,
-                                timeout=10,
+        self.destination_data = {}
+
+    def get_destination(self):
+        """Fetches the destination rows from the Sheety sheet and returns them as a list of dicts"""
+        response = requests.get(
+            url=self.sheety_endpoint,
+            auth=self.sheety_auth,
+            timeout=10,
         )
         response.raise_for_status()
-        self.data = response.json()
+        data = response.json()
+        self.destination_data = data["prices"]
+        return self.destination_data
