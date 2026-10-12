@@ -5,6 +5,7 @@ from pprint import pprint
 from datetime import datetime as dt, timedelta
 from data_manager import DataManager
 from flight_search import FlightSearch
+from flight_data import FlightData, find_cheapest_flight
 
 requests_cache.install_cache(
     "flight_cache",
@@ -23,10 +24,16 @@ tomorrow = today + timedelta(days=1)
 six_months_from_today = today + timedelta(days=180)
 
 flight_search = FlightSearch()
-search = flight_search.check_flights(
+flights = flight_search.check_flights(
     origin_city_code="LHR",
     destination_city_code="CDG",
-    from_time=today,
-    to_time=tomorrow,
+    from_time=tomorrow,
+    to_time=six_months_from_today,
 )
-pprint(search)
+# pprint(flights)
+
+cheapest_flight = find_cheapest_flight(flights, six_months_from_today.strftime("%Y-%m-%d"))
+# pprint(vars(cheapest_flight))
+if cheapest_flight.price !="N/A" and cheapest_flight.price < sheet_data[0]["lowestPrice"]:
+    pprint(f"Lower price flight found to {sheet_data[0]['city']}!")
+    data_manager.update_lower_price(sheet_data[0]["id"], cheapest_flight.price)
