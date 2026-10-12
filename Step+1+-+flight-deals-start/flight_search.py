@@ -22,8 +22,8 @@ class FlightSearch:
         self, origin_city_code, destination_city_code, from_time, to_time
     ):
         """Returns JSON of flight info & pricing from input departure/destination city codes, departure & return dates, # of adults traveling"""
-        self.params["outbound_date"] = from_time
-        self.params["return_date"] = to_time
+        self.params["outbound_date"] = from_time.strftime("%Y-%m-%d")
+        self.params["return_date"] = to_time.strftime("%Y-%m-%d")
         self.params["departure_id"] = origin_city_code
         self.params["arrival_id"] = destination_city_code
         response = requests.get(url=self.endpoint, params=self.params, timeout=60)
