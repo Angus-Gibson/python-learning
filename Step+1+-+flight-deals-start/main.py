@@ -33,16 +33,33 @@ for row in sheet_data:
         destination_city_code=row["iataCode"],
         from_time=tomorrow,
         to_time=six_months_from_today,
+        is_direct=True
     )
     cheapest_flight = find_cheapest_flight(
         flights, six_months_from_today.strftime("%Y-%m-%d")
     )
+    stop_note = "nonstop"
+
+    if cheapest_flight.price == "N/A":
+        stop_note = "with a layover"
+        print(f"No direct flights to {row['city']}, checking with a layover...")
+        flights = flight_search.check_flights(
+            origin_city_code="ORD",
+            destination_city_code=row["iataCode"],
+            from_time=tomorrow,
+            to_time=six_months_from_today,
+            is_direct=False,
+        )
+        cheapest_flight = find_cheapest_flight(
+            flights, six_months_from_today.strftime("%Y-%m-%d")
+        )
+
     pprint(f"{row['city']}: USD {cheapest_flight.price}")
 
     if cheapest_flight.price != "N/A" and cheapest_flight.price < row["lowestPrice"]:
         print(f"Lower price flight found to {row['iataCode']}")
         data_manager.update_lower_price(row["id"], cheapest_flight.price)
         notification_manager.send_message(
-            f"Low price alert! {row['city']}: USD ${cheapest_flight.price}"
+            f"Low price alert! {row['city']}: USD ${cheapest_flight.price} ({stop_note})"
         )
 # pprint(flights)
