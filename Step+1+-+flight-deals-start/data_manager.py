@@ -29,16 +29,12 @@ class DataManager:
         return self.destination_data
 
     def update_lower_price(self, row_id, new_price):
-
-        new_data = {
-            "price": {
-                "lowestPrice": new_price
-            }
-        }
+        """Updates Sheety city price to lowest price"""
+        new_data = {"price": {"lowestPrice": new_price}}
 
         requests.put(
             url=f"{self.sheety_endpoint}/{row_id}",
             json=new_data,
             auth=self.sheety_auth,
-            timeout = 60,
+            timeout=60,
         )

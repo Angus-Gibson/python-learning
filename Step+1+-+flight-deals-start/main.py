@@ -1,16 +1,16 @@
-# This file will need to use the DataManager,FlightSearch, FlightData, NotificationManager classes to achieve the program requirements.
-import os
-import requests_cache
 from pprint import pprint
 from datetime import datetime as dt, timedelta
+import requests_cache
 from data_manager import DataManager
 from flight_search import FlightSearch
 from flight_data import find_cheapest_flight
+from notification_manager import NotificationManager
 
 requests_cache.install_cache(
     "flight_cache",
     urls_expire_after={
         "*.sheety.co*": requests_cache.DO_NOT_CACHE,
+        "*.callmebot.com*": requests_cache.DO_NOT_CACHE,
         "*": 3600,
     },
 )
@@ -24,6 +24,7 @@ tomorrow = today + timedelta(days=1)
 six_months_from_today = today + timedelta(days=180)
 
 flight_search = FlightSearch()
+notification_manager = NotificationManager()
 
 for row in sheet_data:
     print(f"Checking for flights to {row['city']}")
@@ -41,4 +42,7 @@ for row in sheet_data:
     if cheapest_flight.price != "N/A" and cheapest_flight.price < row["lowestPrice"]:
         print(f"Lower price flight found to {row['iataCode']}")
         data_manager.update_lower_price(row["id"], cheapest_flight.price)
+        notification_manager.send_message(
+            f"Low price alert! {row['city']}: USD ${cheapest_flight.price}"
+        )
 # pprint(flights)
