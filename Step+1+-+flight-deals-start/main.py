@@ -17,7 +17,9 @@ requests_cache.install_cache(
 
 data_manager = DataManager()
 sheet_data = data_manager.get_destination()
-# pprint(sheet_data)
+emails = data_manager.get_customer_emails()
+email_list = [row['whatIsYourEMailAddress?'] for row in emails]
+# print(email_list)
 
 today = dt.now()
 tomorrow = today + timedelta(days=1)
@@ -58,7 +60,7 @@ for row in sheet_data:
         stop_text = "nonstop" if stops == 0 else f"{stops} stop(s)"
         print(f"Lower price flight found to {row['iataCode']}")
         data_manager.update_lower_price(row["id"], cheapest_flight.price)
-        notification_manager.send_message(
-            f"Low price alert! {row['city']}: USD ${cheapest_flight.price} ({stop_text})"
-        )
-# pprint(flights)
+        message = f"Low price alert! {row['city']}: USD ${cheapest_flight.price} ({stop_text})"
+        notification_manager.send_message(message)
+        for email in email_list:
+            notification_manager.send_email(email, message)
